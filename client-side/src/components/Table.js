@@ -1,22 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Table({ data, setData, headers, HandleDelete, editable = false }) {
+export default function Table({ data, headers, HandleDelete, EditData, RemoveRow, editable = false }) {
   const navigate = useNavigate();
   const EditHandle = (id) => {
     navigate(`/update/${id}`);
   };
-  const EditData = (rowIndex, header, newValue) => {
-    const updatedData = [...data];
-    updatedData[rowIndex][header] = newValue;
-    setData(updatedData);
-  };
-  const RemoveRow = (rowIndex) => {
-    const updatedData = [...data];
-    updatedData.splice(rowIndex, 1);
-    setData(updatedData);
-  };
-
+  
   return (
     <table className="table table-bordered bg-light border border-muted border-2 mt-4 fw-bold fs-5">
       <thead className="table-secondary">

@@ -24,7 +24,7 @@ router.delete("/delete/:id", controller.deleteUser);
 router.get("/fetch/all/users", controller.getAllUsers);
 
 // add user data
-router.post("/add/details", controller.addDetails);
+// router.post("/add/details", controller.addDetails);
 
 //get data to update
 router.get("/get/data/to/update/:id", controller.getDataToUpdate);

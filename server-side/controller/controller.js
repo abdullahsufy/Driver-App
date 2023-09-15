@@ -149,44 +149,44 @@ const controller = {
   },
 
   // Add User Details
-  async addDetails(req, res, next) {
-    const addDetailsSchema = Joi.object({
-      user: Joi.string().regex(mongodbIdPattern).required(),
-      data: Joi.array().required(),
-    });
+  // async addDetails(req, res, next) {
+  //   const addDetailsSchema = Joi.object({
+  //     user: Joi.string().regex(mongodbIdPattern).required(),
+  //     data: Joi.array().required(),
+  //   });
 
-    const { error } = addDetailsSchema.validate(req.body);
-    if (error) {
-      return next(error);
-    }
+  //   const { error } = addDetailsSchema.validate(req.body);
+  //   if (error) {
+  //     return next(error);
+  //   }
 
-    const { user, data } = req.body;
+  //   const { user, data } = req.body;
 
-    const detailExists = await Detail.exists({ user });
+  //   const detailExists = await Detail.exists({ user });
 
-    if (detailExists) {
-      const error = {
-        status: 409,
-        message: "User already have details!",
-      };
-      return next(error);
-    }
+  //   if (detailExists) {
+  //     const error = {
+  //       status: 409,
+  //       message: "User already have details!",
+  //     };
+  //     return next(error);
+  //   }
 
-    let userDetail;
+  //   let userDetail;
 
-    try {
-      userDetail = new Detail({
-        user,
-        data,
-      });
+  //   try {
+  //     userDetail = new Detail({
+  //       user,
+  //       data,
+  //     });
 
-      await userDetail.save();
-    } catch (error) {
-      return next(error);
-    }
-    const userDetailDto = new DetailDTO(userDetail);
-    return res.status(201).json({ userDetail: userDetailDto });
-  },
+  //     await userDetail.save();
+  //   } catch (error) {
+  //     return next(error);
+  //   }
+  //   const userDetailDto = new DetailDTO(userDetail);
+  //   return res.status(201).json({ userDetail: userDetailDto });
+  // },
 
   async getDetail(req, res, next) {
     const getDetailSchema = Joi.object({
@@ -266,7 +266,7 @@ const controller = {
       name: Joi.string().required(),
       username: Joi.string().required(),
       email: Joi.string().required(),
-      data: Joi.array(),
+      data: Joi.array().required(),
     });
     const { error } = updateDetailSchema.validate(req.body);
     if (error) {
@@ -277,9 +277,25 @@ const controller = {
 
     try {
       await User.updateOne({ _id: id }, { name, username, email });
-      if (data) {
-        await Detail.updateOne({ user: id }, { data });
-      }
+      try {
+        const detailExist = await Detail.findOne({ user: id });
+        if (detailExist) {
+          await Detail.updateOne({ user: id }, { data });
+        } else {
+          let userDetail;
+
+          try {
+            userDetail = new Detail({
+              user: id,
+              data,
+            });
+
+            await userDetail.save();
+          } catch (error) {
+            return next(error);
+          }
+        }
+      } catch (error) {}
     } catch (error) {
       return next(error);
     }

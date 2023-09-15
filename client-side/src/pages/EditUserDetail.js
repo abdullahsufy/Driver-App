@@ -4,6 +4,7 @@ import UserForm from "../components/UserForm";
 import { getDataToUpdate, updateDetails } from "../api/apis";
 import Loader from "../components/Loader";
 import Table from "../components/Table";
+import ModalPopup from "../components/ModalPopup";
 
 export default function EditUserDetail() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ export default function EditUserDetail() {
   const [data, setData] = useState([]);
   const [addDetails, setAddDetails] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalUse, setModalUse] = useState("");
 
   const GetData = async (id) => {
     try {
@@ -95,6 +98,16 @@ export default function EditUserDetail() {
       console.log(error);
     }
   };
+  const EditData = (rowIndex, header, newValue) => {
+    const updatedData = [...data];
+    updatedData[rowIndex][header] = newValue;
+    setData(updatedData);
+  };
+  const RemoveRow = (rowIndex) => {
+    const updatedData = [...data];
+    updatedData.splice(rowIndex, 1);
+    setData(updatedData);
+  };
 
   const headers = ["time", "type", "credit", "debit", "note"];
 
@@ -117,13 +130,28 @@ export default function EditUserDetail() {
           <h2 className="text-center text-light mt-3">User</h2>
           <div className="col-12">
             <UserForm key={inputList[1].value} inputList={inputList} onSubmit={HandleSubmitForm} edit="true" />
-            <button onClick={UpdatePassword} className="btn btn-primary border-0 rounded py-2 px-3 mt-2">
+            <button
+              onClick={() => {
+                setShowModal(true);
+                setModalUse({ action: "passwordupdate" });
+              }}
+              className="btn btn-primary border-0 rounded py-2 px-3 mt-2"
+            >
               Update Password
             </button>
           </div>
           <h2 className="text-center text-light mt-3">{addDetails ? "Add Details" : "Details"}</h2>
           <div className="col-12">
-            <Table data={data} headers={headers} setData={setData} editable="true" />
+            <Table
+              data={data}
+              headers={headers}
+              EditData={EditData}
+              RemoveRow={(i) => {
+                setShowModal(true);
+                setModalUse({ action: "removerow", i });
+              }}
+              editable="true"
+            />
           </div>
           <div className="col-12 d-flex justify-content-end">
             <button className="btn-primary rounded border-0 p-2" onClick={AddRow}>
@@ -131,6 +159,37 @@ export default function EditUserDetail() {
             </button>
           </div>
         </div>
+        <ModalPopup
+          showModal={showModal}
+          setShowModal={setShowModal}
+          title={`Do you really want to ${
+            modalUse.action === "passwordupdate" ? "update the password " : modalUse.action === "removerow" ? "remove the row " : null
+          } ?`}
+        >
+          <div className="col-12 d-flex justify-content-end">
+            <button
+              className="btn btn-danger px-3 py-2 m-2"
+              onClick={() => {
+                setShowModal(false);
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn btn-primary px-3 py-2 m-2"
+              onClick={() => {
+                if (modalUse.action === "passwordupdate") {
+                  UpdatePassword();
+                } else if (modalUse.action === "removerow") {
+                  RemoveRow(modalUse.i);
+                }
+                setShowModal(false);
+              }}
+            >
+              {modalUse.action === "passwordupdate" ? "Update" : modalUse.action === "removerow" ? "Remove" : null}
+            </button>
+          </div>
+        </ModalPopup>
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export default function UserForm({ onSubmit, inputList, edit = false }) {
           {inputList.map((e) => (
             <React.Fragment key={e.name}>
               <label htmlFor={e.name} className={`form-label ${edit ? "text-light" : ""}`}>
-                {e.name === "confirmPassword" ? "Confirm Password" : Capitalize(e.name)}
+                {edit && e.name === "password" ? "Enter New Password" : e.name === "confirmPassword" ? "Confirm Password" : Capitalize(e.name)}
               </label>
               <Input
                 type={e.type}
