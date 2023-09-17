@@ -17,7 +17,7 @@ app.use(cors(corsOption));
 
 dbConnect();
 
-app.use(router);
+app.use(router );
 
 app.use(ErrorHandler);
 
