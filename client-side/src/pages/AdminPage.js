@@ -7,7 +7,7 @@ import Loader from "../components/Loader";
 import ModalPopup from "../components/ModalPopup";
 
 export default function AdminPage() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalUse, setModalUse] = useState("");
   const [deleteUserId, setDeleteUserId] = useState(null);
@@ -67,7 +67,7 @@ export default function AdminPage() {
     { name: "confirmPassword", type: "password", value: "" },
   ];
 
-  if (!data.length) {
+  if (!data) {
     return <Loader text="Details" color="#ffffff" size="120" />;
   }
 
@@ -87,20 +87,25 @@ export default function AdminPage() {
           </Button>
         </div>
         <div className="row mt-3">
-          <Table
-            data={data}
-            headers={headers}
-            HandleDelete={(id) => {
-              setShowModal(true);
-              setModalUse("deleteuser");
-              setDeleteUserId(id);
-            }}
-          />
+          {data.length ? (
+            <Table
+              data={data}
+              headers={headers}
+              HandleDelete={(id) => {
+                setShowModal(true);
+                setModalUse("deleteuser");
+                setDeleteUserId(id);
+              }}
+            />
+          ) : (
+            <h2 className="text-light text-center mt-5">No users to show</h2>
+          )}
         </div>
         <ModalPopup
           showModal={showModal}
           setShowModal={setShowModal}
-          title={modalUse === "adduser" ? "Create a User" : "Do you really want to delete this user ?"}
+          closeBtn={modalUse === "deleteuser" ? false : true}
+          title={modalUse === "adduser" ? "Create a User" : modalUse === "deleteuser" ? "Do you really want to delete this user ?" : null}
         >
           {modalUse === "adduser" ? (
             <div>

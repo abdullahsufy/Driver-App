@@ -97,6 +97,11 @@ export default function EditUserDetail() {
     } catch (error) {
       console.log(error);
     }
+    setShowModal(true);
+    setModalUse({ action: "update" });
+    setTimeout(() => {
+      setShowModal(false);
+    }, 1000);
   };
   const EditData = (rowIndex, header, newValue) => {
     const updatedData = [...data];
@@ -162,33 +167,42 @@ export default function EditUserDetail() {
         <ModalPopup
           showModal={showModal}
           setShowModal={setShowModal}
-          title={`Do you really want to ${
-            modalUse.action === "passwordupdate" ? "update the password " : modalUse.action === "removerow" ? "remove the row " : null
-          } ?`}
+          closeBtn={false}
+          title={
+            modalUse.action === "passwordupdate"
+              ? "Do you really want to update the password ?"
+              : modalUse.action === "removerow"
+              ? "Do you really want to remove the row ?"
+              : modalUse.action === "update"
+              ? "Updated Successfully!"
+              : null
+          }
         >
-          <div className="col-12 d-flex justify-content-end">
-            <button
-              className="btn btn-danger px-3 py-2 m-2"
-              onClick={() => {
-                setShowModal(false);
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              className="btn btn-primary px-3 py-2 m-2"
-              onClick={() => {
-                if (modalUse.action === "passwordupdate") {
-                  UpdatePassword();
-                } else if (modalUse.action === "removerow") {
-                  RemoveRow(modalUse.i);
-                }
-                setShowModal(false);
-              }}
-            >
-              {modalUse.action === "passwordupdate" ? "Update" : modalUse.action === "removerow" ? "Remove" : null}
-            </button>
-          </div>
+          {modalUse.action !== "update" && (
+            <div className="col-12 d-flex justify-content-end">
+              <button
+                className="btn btn-danger px-3 py-2 m-2"
+                onClick={() => {
+                  setShowModal(false);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary px-3 py-2 m-2"
+                onClick={() => {
+                  if (modalUse.action === "passwordupdate") {
+                    UpdatePassword();
+                  } else if (modalUse.action === "removerow") {
+                    RemoveRow(modalUse.i);
+                  }
+                  setShowModal(false);
+                }}
+              >
+                {modalUse.action === "passwordupdate" ? "Update" : modalUse.action === "removerow" ? "Remove" : null}
+              </button>
+            </div>
+          )}
         </ModalPopup>
       </div>
     </div>

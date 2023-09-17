@@ -17,10 +17,10 @@ app.use(cors(corsOption));
 
 dbConnect();
 
-app.use(router );
+app.use(router);
 
 app.use(ErrorHandler);
 
 app.listen(PORT, () => {
   console.log(`Backend is running on port : ${PORT}`);
-})
+});
