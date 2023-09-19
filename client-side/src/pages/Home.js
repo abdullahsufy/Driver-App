@@ -11,7 +11,11 @@ export default function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user._id);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
+  const [credit, setCredit] = useState(0);
+  const [debit, setDebit] = useState(0);
+  const [balance, setBalance] = useState(0);
+  // const [oldBalance, setOldBalance] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("auth-token");
@@ -40,6 +44,27 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    if (data) {
+      let newCredit = 0,
+        newDebit = 0;
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].credit !== "") {
+          newCredit += parseFloat(data[i].credit);
+        }
+        if (data[i].debit !== "") {
+          newDebit += parseFloat(data[i].debit);
+        }
+      }
+      setCredit(newCredit);
+      setDebit(newDebit);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    setBalance(credit - debit);
+  }, [credit, debit]);
+
   const ResetFunction = () => {
     dispatch(resetUser);
     localStorage.clear();
@@ -47,12 +72,12 @@ export default function Home() {
   };
   const headers = ["time", "type", "credit", "debit", "note"];
 
-  if (!data.length) {
+  if (!data) {
     return <Loader text="Details" color="#ffffff" size="120" />;
   }
 
   return (
-    <div className="container-fluid my-3">
+    <div className="container-fluid my-3 mb-5 ">
       <div className="container d-flex justify-content-between">
         <button className="fs-2 text-light border-0 rounded" style={{ backgroundColor: "#347AB6" }}>
           VIEW
@@ -61,19 +86,23 @@ export default function Home() {
           RESET
         </button>
       </div>
-      <div className="container mt-5 pt-5">
-        <div>
-          <ContentModules title="OLD BALANCE" amount="0" />
+      {data.length ? (
+        <div className="container mt-5 pt-5">
+          <div>
+            <ContentModules title="OLD BALANCE" amount="0" />
+          </div>
+          <div>
+            <Table data={data} headers={headers} />
+          </div>
+          <div>
+            <ContentModules title="TOTAL CREDIT" amount={credit} />
+            <ContentModules title="TOTAL DEBIT" amount={debit} />
+            <ContentModules title="TOTAL BALANCE" amount={balance} />
+          </div>
         </div>
-        <div>
-          <Table data={data} headers={headers} />
-        </div>
-        <div>
-          <ContentModules title="TOTAL CREDIT" amount="10612.61" />
-          <ContentModules title="TOTAL DEBIT" amount="10612.61" />
-          <ContentModules title="BALANCE" amount="10612.61" />
-        </div>
-      </div>
+      ) : (
+        <h1 className="text-center">No data to show</h1>
+      )}
     </div>
   );
 }
