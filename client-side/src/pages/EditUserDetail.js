@@ -19,6 +19,7 @@ export default function EditUserDetail() {
   const [updatedUser, setUpdatedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalUse, setModalUse] = useState("");
+  const [oldBalance, setOldBalance] = useState(0);
 
   const GetData = async (id) => {
     try {
@@ -33,6 +34,7 @@ export default function EditUserDetail() {
         setUpdatedUser(user);
         if (detail) {
           setData(detail.data);
+          setOldBalance(detail.oldblnc);
         } else {
           setAddDetails(true);
           AddRow();
@@ -88,6 +90,7 @@ export default function EditUserDetail() {
       username: updatedUser.username,
       email: updatedUser.email,
       data,
+      oldblnc: oldBalance
     };
     try {
       const response = await updateDetails(content);
@@ -144,6 +147,16 @@ export default function EditUserDetail() {
             >
               Update Password
             </button>
+          </div>
+          <div className="col-12 mt-4">
+            <h2 className="text-light text-center">OLD BALANCE</h2>
+            <input
+              className={`bg-light fs-3 fw-bold text-dark rounded px-2 py-2 border border-light mt-3 w-100`}
+              type="number"
+              min={0}
+              value={oldBalance}
+              onChange={(e) => setOldBalance(e.target.value)}
+            ></input>
           </div>
           <h2 className="text-center text-light mt-3">{addDetails ? "Add Details" : "Details"}</h2>
           <div className="col-12">

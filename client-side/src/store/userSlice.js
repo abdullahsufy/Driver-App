@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   _id: "",
   username: "",
+  errormessage: "",
 };
 
 const userSlice = createSlice({
@@ -10,13 +11,15 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const { _id, username } = action.payload;
+      const { _id, username, errormessage } = action.payload;
       state._id = _id;
       state.username = username;
+      state.errormessage = errormessage;
     },
     resetUser: (state) => {
       state._id = "";
       state.username = "";
+      state.errormessage = "";
     },
   },
 });

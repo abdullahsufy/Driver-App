@@ -34,6 +34,8 @@ export default function Login() {
       }
     } catch (error) {
       console.error(error);
+      dispatch(setUser({errormessage: "Invalid username or password"}))
+      navigate('/error')
     }
   };
 

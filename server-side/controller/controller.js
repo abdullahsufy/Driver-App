@@ -266,6 +266,7 @@ const controller = {
       name: Joi.string().required(),
       username: Joi.string().required(),
       email: Joi.string().required(),
+      oldblnc: Joi.number().required(),
       data: Joi.array().required(),
     });
     const { error } = updateDetailSchema.validate(req.body);
@@ -273,14 +274,14 @@ const controller = {
       return next(error);
     }
 
-    const { id, name, username, email, data } = req.body;
+    const { id, name, username, email, oldblnc, data } = req.body;
 
     try {
       await User.updateOne({ _id: id }, { name, username, email });
       try {
         const detailExist = await Detail.findOne({ user: id });
         if (detailExist) {
-          await Detail.updateOne({ user: id }, { data });
+          await Detail.updateOne({ user: id }, { data, oldblnc });
         } else {
           let userDetail;
 
@@ -288,6 +289,7 @@ const controller = {
             userDetail = new Detail({
               user: id,
               data,
+              oldblnc
             });
 
             await userDetail.save();

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ContentModules from "../components/ContentModules";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { resetUser } from "../store/userSlice";
+import { resetUser, setUser } from "../store/userSlice";
 import { getDetail } from "../api/apis";
 import Loader from "../components/Loader";
 import Table from "../components/Table";
@@ -10,18 +10,15 @@ import Table from "../components/Table";
 export default function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const user = useSelector((state) => state.user._id);
   const [data, setData] = useState(null);
   const [credit, setCredit] = useState(0);
   const [debit, setDebit] = useState(0);
   const [balance, setBalance] = useState(0);
-  // const [oldBalance, setOldBalance] = useState(0);
+  const [oldBalance, setOldBalance] = useState(0);
 
   useEffect(() => {
-    const token = localStorage.getItem("auth-token");
-    if (!token) {
-      navigate("/");
-    }
     getUserDetail();
     document.body.style.backgroundColor = "#084c61";
     return () => {
@@ -35,12 +32,16 @@ export default function Home() {
       const response = await getDetail(user);
       if (response.status === 200) {
         let newdata = response.data.detail.data;
+        let newoldbalance = response.data.detail.oldblnc;
         setData(newdata);
+        setOldBalance(newoldbalance);
       } else {
         console.log(response.status);
       }
     } catch (error) {
       console.error(error);
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+      navigate("/error");
     }
   };
 
@@ -89,7 +90,7 @@ export default function Home() {
       {data.length ? (
         <div className="container mt-5 pt-5">
           <div>
-            <ContentModules title="OLD BALANCE" amount="0" />
+            <ContentModules title="OLD BALANCE" amount={oldBalance} />
           </div>
           <div>
             <Table data={data} headers={headers} />

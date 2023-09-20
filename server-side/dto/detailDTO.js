@@ -3,6 +3,7 @@ class DetailDTO {
     this._id = e._id;
     this.user = e.user;
     this.data = e.data;
+    this.oldblnc = e.oldblnc;
   }
 }
 
