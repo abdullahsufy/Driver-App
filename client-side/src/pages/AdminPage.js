@@ -2,11 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { gettAllUsers, register, deleteUser } from "../api/apis";
 import UserForm from "../components/UserForm";
+import { useNavigate } from "react-router-dom";
 import Table from "../components/Table";
 import Loader from "../components/Loader";
 import ModalPopup from "../components/ModalPopup";
+import { useDispatch } from "react-redux";
+import { setUser } from "../store/userSlice";
 
 export default function AdminPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [data, setData] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalUse, setModalUse] = useState("");
@@ -18,6 +24,7 @@ export default function AdminPage() {
     return () => {
       document.body.style.backgroundColor = "white";
     };
+    // eslint-disable-next-line
   }, []);
 
   const getUsers = async () => {
@@ -29,6 +36,8 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.log(error);
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+      navigate("/error");
     }
   };
 

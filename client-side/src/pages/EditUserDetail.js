@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import UserForm from "../components/UserForm";
-import { getDataToUpdate, updateDetails } from "../api/apis";
+import { getDataToUpdate, updateDetails, updatePassword } from "../api/apis";
 import Loader from "../components/Loader";
 import Table from "../components/Table";
 import ModalPopup from "../components/ModalPopup";
+import { useDispatch } from "react-redux";
+import { setUser } from "../store/userSlice";
+import { useFormik } from "formik";
+import createUserSchema from "../schemas/createUserSchema";
+import Input from "../components/Input";
 
 export default function EditUserDetail() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { id } = useParams();
   const [inputList, setInputList] = useState([
     { name: "name", type: "text", value: "" },
@@ -16,7 +23,9 @@ export default function EditUserDetail() {
   ]);
   const [data, setData] = useState([]);
   const [addDetails, setAddDetails] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
   const [updatedUser, setUpdatedUser] = useState(null);
+  const [updatePasswordBtn, setUpdatePasswordBtn] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalUse, setModalUse] = useState("");
   const [oldBalance, setOldBalance] = useState(0);
@@ -64,24 +73,26 @@ export default function EditUserDetail() {
     // eslint-disable-next-line
   }, []);
 
-  const UpdatePassword = () => {
-    let updatePassOneTym = true;
-    if (inputList.length > 3 && inputList[3].name === "password") {
-      updatePassOneTym = false;
-    }
+  const { touched, handleBlur, errors } = useFormik({
+    initialValues: newPassword,
+    validationSchema: createUserSchema,
+  });
 
-    if (updatePassOneTym) {
-      const pass = {
-        name: "password",
-        type: "password",
-        value: "",
-      };
-      const newList = [...inputList, pass];
-      setInputList(newList);
-    }
-  };
   const HandleSubmitForm = (newUser) => {
     setUpdatedUser(newUser);
+  };
+
+  const UpdatePassword = async () => {
+    const data = {
+      id,
+      password: newPassword,
+    };
+    try {
+      await updatePassword(data);
+    } catch (error) {
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+      navigate("/error");
+    }
   };
   const UpdateUserDetails = async () => {
     const content = {
@@ -90,7 +101,7 @@ export default function EditUserDetail() {
       username: updatedUser.username,
       email: updatedUser.email,
       data,
-      oldblnc: oldBalance
+      oldblnc: oldBalance,
     };
     try {
       const response = await updateDetails(content);
@@ -99,8 +110,15 @@ export default function EditUserDetail() {
       }
     } catch (error) {
       console.log(error);
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+      navigate("/error");
+    }
+    if (!updatePasswordBtn && newPassword !== "") {
+      UpdatePassword();
     }
     setShowModal(true);
+    setUpdatePasswordBtn(true);
+    setNewPassword("");
     setModalUse({ action: "update" });
     setTimeout(() => {
       setShowModal(false);
@@ -128,7 +146,7 @@ export default function EditUserDetail() {
       <div className="container mt-5">
         <div className="row mt-5">
           <div className="col-12 d-flex justify-content-between">
-            <button className="btn-primary rounded border-0 p-2" onClick={() => navigate("/admin")}>
+            <button className="btn-primary rounded border-0 p-2" onClick={() => navigate("/admin/panel")}>
               Back to admin Panel
             </button>
             <button className="btn-success rounded border-0 p-2" onClick={UpdateUserDetails}>
@@ -138,15 +156,34 @@ export default function EditUserDetail() {
           <h2 className="text-center text-light mt-3">User</h2>
           <div className="col-12">
             <UserForm key={inputList[1].value} inputList={inputList} onSubmit={HandleSubmitForm} edit="true" />
-            <button
-              onClick={() => {
-                setShowModal(true);
-                setModalUse({ action: "passwordupdate" });
-              }}
-              className="btn btn-primary border-0 rounded py-2 px-3 mt-2"
-            >
-              Update Password
-            </button>
+            {updatePasswordBtn ? (
+              <button
+                onClick={() => {
+                  setShowModal(true);
+                  setModalUse({ action: "passwordupdate" });
+                }}
+                className="btn btn-primary border-0 rounded py-2 px-3 mt-2"
+              >
+                Update Password
+              </button>
+            ) : (
+              <>
+                <label htmlFor="password" className="form-label text-light">
+                  Enter New Password
+                </label>
+                <Input
+                  type="password"
+                  name="password"
+                  value={newPassword}
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                  }}
+                  onBlur={handleBlur}
+                  error={errors.password && touched.password ? 1 : undefined}
+                  errormessage={errors.password}
+                />
+              </>
+            )}
           </div>
           <div className="col-12 mt-4">
             <h2 className="text-light text-center">OLD BALANCE</h2>
@@ -205,7 +242,7 @@ export default function EditUserDetail() {
                 className="btn btn-primary px-3 py-2 m-2"
                 onClick={() => {
                   if (modalUse.action === "passwordupdate") {
-                    UpdatePassword();
+                    setUpdatePasswordBtn(false);
                   } else if (modalUse.action === "removerow") {
                     RemoveRow(modalUse.i);
                   }

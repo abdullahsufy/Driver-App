@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const User = require("../models/user");
+const Admin = require("../models/admin");
 const Detail = require("../models/detail");
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,25}$/;
 const mongodbIdPattern = /^[0-9a-fA-F]{24}$/;
@@ -148,46 +149,6 @@ const controller = {
     return res.status(200).json({ message: "User deleted!" });
   },
 
-  // Add User Details
-  // async addDetails(req, res, next) {
-  //   const addDetailsSchema = Joi.object({
-  //     user: Joi.string().regex(mongodbIdPattern).required(),
-  //     data: Joi.array().required(),
-  //   });
-
-  //   const { error } = addDetailsSchema.validate(req.body);
-  //   if (error) {
-  //     return next(error);
-  //   }
-
-  //   const { user, data } = req.body;
-
-  //   const detailExists = await Detail.exists({ user });
-
-  //   if (detailExists) {
-  //     const error = {
-  //       status: 409,
-  //       message: "User already have details!",
-  //     };
-  //     return next(error);
-  //   }
-
-  //   let userDetail;
-
-  //   try {
-  //     userDetail = new Detail({
-  //       user,
-  //       data,
-  //     });
-
-  //     await userDetail.save();
-  //   } catch (error) {
-  //     return next(error);
-  //   }
-  //   const userDetailDto = new DetailDTO(userDetail);
-  //   return res.status(201).json({ userDetail: userDetailDto });
-  // },
-
   async getDetail(req, res, next) {
     const getDetailSchema = Joi.object({
       id: Joi.string().regex(mongodbIdPattern).required(),
@@ -289,7 +250,7 @@ const controller = {
             userDetail = new Detail({
               user: id,
               data,
-              oldblnc
+              oldblnc,
             });
 
             await userDetail.save();
@@ -303,6 +264,121 @@ const controller = {
     }
 
     return res.status(200).json({ message: "Updated Sucessfully!" });
+  },
+
+  async updatePassword(req, res, next) {
+    const updateDetailSchema = Joi.object({
+      id: Joi.string().regex(mongodbIdPattern).required(),
+      password: Joi.string().pattern(passwordPattern).required(),
+    });
+    const { error } = updateDetailSchema.validate(req.body);
+    if (error) {
+      return next(error);
+    }
+
+    const { id, password } = req.body;
+
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await User.updateOne({ _id: id }, { password: hashedPassword });
+    } catch (error) {
+      return next(error);
+    }
+
+    return res.status(200).json({ message: "Updated Sucessfully!" });
+  },
+
+  // async createAdmin(req, res, next) {
+  //   const userRegisterSchema = Joi.object({
+  //     username: Joi.string().min(5).max(30).required(),
+  //     password: Joi.string().pattern(passwordPattern).required(),
+  //     confirmPassword: Joi.ref("password"),
+  //   });
+
+  //   const { error } = userRegisterSchema.validate(req.body);
+  //   if (error) {
+  //     return next(error);
+  //   }
+
+  //   const { username, password } = req.body;
+
+  //   try {
+  //     const usernameInUse = await Admin.exists({ username });
+
+  //     if (usernameInUse) {
+  //       const error = {
+  //         status: 409,
+  //         message: "Username already registered, use another username!",
+  //       };
+  //       return next(error);
+  //     }
+  //   } catch (error) {
+  //     return next(error);
+  //   }
+
+  //   const hashedPassword = await bcrypt.hash(password, 10);
+
+  //   let user;
+
+  //   try {
+  //     const userToRegister = new Admin({
+  //       username,
+  //       password: hashedPassword,
+  //     });
+
+  //     user = await userToRegister.save();
+
+  //     // token generation
+
+  //   } catch (error) {
+  //     return next(error);
+  //   }
+  //   return res.status(201).json({ message: 'Admin Created!' });
+  // },
+
+  async adminLogin(req, res, next) {
+    const adminLoginSchema = Joi.object({
+      username: Joi.string().min(5).max(30).required(),
+      password: Joi.string().pattern(passwordPattern).required(),
+    });
+
+    const { error } = adminLoginSchema.validate(req.body);
+
+    if (error) {
+      return next(error);
+    }
+
+    const { username, password } = req.body;
+
+    let user;
+
+    try {
+      user = await Admin.findOne({ username });
+
+      if (!user) {
+        const error = {
+          status: 401,
+          message: "Invalid username",
+        };
+        next(error);
+      }
+
+      const match = await bcrypt.compare(password, user.password);
+
+      if (!match) {
+        const error = {
+          status: 401,
+          message: "Invalid password",
+        };
+        next(error);
+      }
+
+      const adminToken = JWTService.signadminToken({ _id: user.id }, "120m");
+
+      return res.status(200).json({ adminToken });
+    } catch (error) {
+      return next(error);
+    }
   },
 };
 

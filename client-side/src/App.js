@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import AdminPage from "./pages/AdminPage";
 import EditUserDetail from "./pages/EditUserDetail";
 import ErrorPage from "./pages/ErrorPage";
+import AdminLogin from "./pages/AdminLogin";
 
 function App() {
   return (
@@ -14,8 +15,9 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Login />} />
           <Route exact path="/home" element={<Home />} />
-          <Route exact path="/admin" element={<AdminPage />} />
-          <Route exact path="/update/:id" element={<EditUserDetail />} />
+          <Route exact path="/admin" element={<AdminLogin/>} />
+          <Route exact path="/admin/panel" element={<AdminPage />} />
+          <Route exact path="/update/user/:id" element={<EditUserDetail />} />
           <Route exact path="/error" element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>

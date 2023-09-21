@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function Table({ data, headers, HandleDelete, EditData, RemoveRow, editable = false }) {
   const navigate = useNavigate();
   const EditHandle = (id) => {
-    navigate(`/update/${id}`);
+    navigate(`/update/user/${id}`);
   };
   
   return (
