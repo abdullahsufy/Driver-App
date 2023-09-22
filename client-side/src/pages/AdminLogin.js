@@ -41,8 +41,7 @@ export default function AdminLogin() {
         console.log(`Login failed with status: ${response.status}`);
       }
     } catch (error) {
-      console.error(error);
-      dispatch(setUser({ errormessage: "Invalid username or password" }));
+      dispatch(setUser({ errormessage: "Invalid username or password", errorsource: "admin" }));
       navigate("/error");
     }
   };

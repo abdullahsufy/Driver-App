@@ -1,5 +1,12 @@
 import axios from "axios";
 
+const refreshUserToken = () => {
+  apiForUser.defaults.headers["auth-token"] = localStorage.getItem("auth-token");
+};
+const refreshAdminToken = () => {
+  apiForAdmin.defaults.headers["admin-token"] = localStorage.getItem("admin-token");
+};
+
 const apiForLogin = axios.create({
   baseURL: "http://localhost:5000",
   withCredentials: true,
@@ -38,6 +45,7 @@ export const login = async (data) => {
 };
 
 export const getDetail = async (id) => {
+  refreshUserToken();
   try {
     const response = await apiForUser.get(`/user/details/${id}`);
     return response;
@@ -57,7 +65,18 @@ export const adminLogin = async (data) => {
   }
 };
 
+export const gettAllUsers = async () => {
+  refreshAdminToken();
+  try {
+    const response = await apiForAdmin.get("/fetch/all/users");
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const register = async (data) => {
+  refreshAdminToken();
   try {
     const response = await apiForAdmin.post("/register", data);
     return response;
@@ -67,6 +86,7 @@ export const register = async (data) => {
 };
 
 export const updateAdminPassword = async (data) => {
+  refreshAdminToken();
   try {
     const response = await apiForAdmin.put("/update/admin/password", data);
     return response;
@@ -76,6 +96,7 @@ export const updateAdminPassword = async (data) => {
 };
 
 export const deleteUser = async (id) => {
+  refreshAdminToken();
   try {
     const response = await apiForAdmin.delete(`/delete/${id}`);
     return response;
@@ -84,16 +105,8 @@ export const deleteUser = async (id) => {
   }
 };
 
-export const gettAllUsers = async () => {
-  try {
-    const response = await apiForAdmin.get("/fetch/all/users");
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const getDataToUpdate = async (id) => {
+  refreshAdminToken();
   try {
     const response = await apiForAdmin.get(`/get/data/to/update/${id}`);
     return response;
@@ -103,6 +116,7 @@ export const getDataToUpdate = async (id) => {
 };
 
 export const updateDetails = async (details) => {
+  refreshAdminToken();
   try {
     const response = await apiForAdmin.put("/update/data", details);
     return response;
@@ -112,6 +126,7 @@ export const updateDetails = async (details) => {
 };
 
 export const updatePassword = async (data) => {
+  refreshAdminToken();
   try {
     const response = await apiForAdmin.put("/update/password", data);
     return response;

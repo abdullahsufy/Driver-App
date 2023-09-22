@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ContentModules from "../components/ContentModules";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { resetUser, setUser } from "../store/userSlice";
 import { getDetail } from "../api/apis";
 import Loader from "../components/Loader";
@@ -11,7 +11,7 @@ export default function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.user._id);
+  const { user } = useParams();
   const [data, setData] = useState(null);
   const [credit, setCredit] = useState(0);
   const [debit, setDebit] = useState(0);
@@ -36,11 +36,10 @@ export default function Home() {
         setData(newdata);
         setOldBalance(newoldbalance);
       } else {
-        console.log(response.status);
+        console.log(`error occured with status: ${response.status}`);
       }
     } catch (error) {
-      console.error(error);
-      dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token", errorsource: "user" }));
       navigate("/error");
     }
   };

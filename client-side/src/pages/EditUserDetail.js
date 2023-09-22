@@ -49,7 +49,8 @@ export default function EditUserDetail() {
         }
       }
     } catch (error) {
-      console.log(error);
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token", errorsource: "admin" }));
+      navigate("/error");
     }
   };
   const AddRow = () => {
@@ -91,7 +92,7 @@ export default function EditUserDetail() {
     try {
       await updatePassword(data);
     } catch (error) {
-      dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token", errorsource: "admin" }));
       navigate("/error");
     }
   };
@@ -105,13 +106,9 @@ export default function EditUserDetail() {
       oldblnc: oldBalance,
     };
     try {
-      const response = await updateDetails(content);
-      if (response.status === 200) {
-        console.log(response.data.message);
-      }
+      await updateDetails(content);
     } catch (error) {
-      console.log(error);
-      dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token", errorsource: "admin" }));
       navigate("/error");
     }
     if (!updatePasswordBtn && values.password !== "") {
@@ -172,14 +169,14 @@ export default function EditUserDetail() {
                   Enter New Password
                 </label>
                 <Input
-                type="password"
-                name="password"
-                value={values.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={errors.password && touched.password ? 1 : undefined}
-                errormessage={errors.password}
-              />
+                  type="password"
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={errors.password && touched.password ? 1 : undefined}
+                  errormessage={errors.password}
+                />
               </>
             )}
           </div>

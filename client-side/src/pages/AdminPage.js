@@ -40,8 +40,7 @@ export default function AdminPage() {
         setData(users);
       }
     } catch (error) {
-      console.log(error);
-      dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token", errorsource: "admin" }));
       navigate("/error");
     }
   };
@@ -55,7 +54,8 @@ export default function AdminPage() {
         setData(newData);
       }
     } catch (error) {
-      console.log(error);
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token", errorsource: "admin" }));
+      navigate("/error");
     }
     setShowModal(false);
   };
@@ -76,7 +76,7 @@ export default function AdminPage() {
           }, 1000);
         }
       } catch (error) {
-        dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+        dispatch(setUser({ errormessage: "Please authenticate using a valid token", errorsource: "admin" }));
         navigate("/error");
       }
     }
@@ -98,7 +98,8 @@ export default function AdminPage() {
         setData(newData);
       }
     } catch (error) {
-      console.log(error);
+      dispatch(setUser({ errormessage: "Please authenticate using a valid token", errorsource: "admin" }));
+      navigate("/error");
     }
   };
   const headers = ["name", "username", "email", "operations"];
@@ -118,7 +119,7 @@ export default function AdminPage() {
     <div className="container-fluid">
       <div className="container mt-5">
         <div className="col-12 mb-5 d-flex justify-content-between align-items-center">
-          <p className="text-light fs-2">Admin Only</p>
+          <p className="text-light fs-2">ADMIN PANEL</p>
           <button
             className="btn btn-danger px-2 py-0 border-0 rounded"
             onClick={() => {
@@ -127,10 +128,9 @@ export default function AdminPage() {
             }}
             style={{ height: "50px" }}
           >
-            Update admin password
+            Update Admin Password
           </button>
         </div>
-        <h1 className="text-center">Admin Panel</h1>
         <div className="d-flex justify-content-end">
           <Button
             className="btn-primary border-0"

@@ -28,14 +28,13 @@ export default function Login() {
         };
         localStorage.setItem("auth-token", response.data.accessToken);
         dispatch(setUser(user));
-        navigate("/home");
+        navigate(`/home/${user._id}`);
       } else {
         console.log(`Login failed with status: ${response.status}`);
       }
     } catch (error) {
-      console.error(error);
-      dispatch(setUser({errormessage: "Invalid username or password"}))
-      navigate('/error')
+      dispatch(setUser({ errormessage: "Invalid username or password", errorsource: "user" }));
+      navigate("/error");
     }
   };
 

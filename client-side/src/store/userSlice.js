@@ -4,6 +4,7 @@ const initialState = {
   _id: "",
   username: "",
   errormessage: "",
+  errorsource: "",
 };
 
 const userSlice = createSlice({
@@ -11,15 +12,17 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const { _id, username, errormessage } = action.payload;
+      const { _id, username, errormessage, errorsource } = action.payload;
       state._id = _id;
       state.username = username;
       state.errormessage = errormessage;
+      state.errorsource = errorsource;
     },
     resetUser: (state) => {
       state._id = "";
       state.username = "";
       state.errormessage = "";
+      state.errorsource = "";
     },
   },
 });
