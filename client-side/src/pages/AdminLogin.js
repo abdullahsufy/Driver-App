@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
 import { adminLogin } from "../api/apis";
 
-
 export default function AdminLogin() {
   const dispatch = useDispatch();
 
@@ -36,7 +35,8 @@ export default function AdminLogin() {
       const response = await adminLogin(data);
       if (response.status === 200) {
         localStorage.setItem("admin-token", response.data.adminToken);
-        navigate("/admin/panel");
+        const { id } = response.data.admin;
+        navigate(`/admin/panel/${id}`);
       } else {
         console.log(`Login failed with status: ${response.status}`);
       }
@@ -80,11 +80,7 @@ export default function AdminLogin() {
             errormessage={errors.password}
           />
         </div>
-        <button
-          onClick={HandleLogin}
-          className={`${disabled ? "btn-dark" : "btn-light"} rounded border-0 px-3 py-2 mt-3 fs-4 fw-bold`}
-          disabled={disabled}
-        >
+        <button onClick={HandleLogin} className={`${disabled ? "btn-dark" : "btn-light"} rounded border-0 px-3 py-2 mt-3 fs-4 fw-bold`} disabled={disabled}>
           Login
         </button>
       </div>

@@ -66,7 +66,7 @@ const controller = {
 
       // token generation
 
-      accessToken = JWTService.signaccessToken({ _id: user.id }, "60m");
+      accessToken = JWTService.signaccessToken({ _id: user._id }, "60m");
     } catch (error) {
       return next(error);
     }
@@ -373,12 +373,38 @@ const controller = {
         next(error);
       }
 
-      const adminToken = JWTService.signadminToken({ _id: user.id }, "120m");
+      const adminToken = JWTService.signadminToken({ _id: user._id }, "120m");
+      let admin = {
+        id: user._id,
+        username: user.username,
+      };
 
-      return res.status(200).json({ adminToken });
+      return res.status(200).json({ admin, adminToken });
     } catch (error) {
       return next(error);
     }
+  },
+
+  async editAdmin(req, res, next) {
+    const updateDetailSchema = Joi.object({
+      id: Joi.string().regex(mongodbIdPattern).required(),
+      password: Joi.string().pattern(passwordPattern).required(),
+    });
+    const { error } = updateDetailSchema.validate(req.body);
+    if (error) {
+      return next(error);
+    }
+
+    const { id, password } = req.body;
+
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await Admin.updateOne({ _id: id }, { password: hashedPassword });
+    } catch (error) {
+      return next(error);
+    }
+
+    return res.status(200).json({ message: "Updated Sucessfully!" });
   },
 };
 

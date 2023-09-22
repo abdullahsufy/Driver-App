@@ -1,10 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Table({ data, headers, HandleDelete, EditData, RemoveRow, editable = false }) {
+export default function Table({ id ,data, headers, HandleDelete, EditData, RemoveRow, editable = false }) {
   const navigate = useNavigate();
-  const EditHandle = (id) => {
-    navigate(`/update/user/${id}`);
+  const EditHandle = (userid) => {
+    navigate(`/${id}/update/${userid}`);
   };
   
   return (

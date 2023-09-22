@@ -66,6 +66,15 @@ export const register = async (data) => {
   }
 };
 
+export const updateAdminPassword = async (data) => {
+  try {
+    const response = await apiForAdmin.put("/update/admin/password", data);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const deleteUser = async (id) => {
   try {
     const response = await apiForAdmin.delete(`/delete/${id}`);

@@ -15,7 +15,7 @@ export default function EditUserDetail() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { id } = useParams();
+  const { id, userid } = useParams();
   const [inputList, setInputList] = useState([
     { name: "name", type: "text", value: "" },
     { name: "username", type: "text", value: "" },
@@ -23,16 +23,15 @@ export default function EditUserDetail() {
   ]);
   const [data, setData] = useState([]);
   const [addDetails, setAddDetails] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
   const [updatedUser, setUpdatedUser] = useState(null);
   const [updatePasswordBtn, setUpdatePasswordBtn] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalUse, setModalUse] = useState("");
   const [oldBalance, setOldBalance] = useState(0);
 
-  const GetData = async (id) => {
+  const GetData = async (userid) => {
     try {
-      const response = await getDataToUpdate(id);
+      const response = await getDataToUpdate(userid);
       if (response.status === 200) {
         const { user, detail } = response.data;
         const updatedInputList = inputList.map((input) => ({
@@ -66,15 +65,17 @@ export default function EditUserDetail() {
   };
   useEffect(() => {
     document.body.style.backgroundColor = "#084c61";
-    GetData(id);
+    GetData(userid);
     return () => {
       document.body.style.backgroundColor = "white";
     };
     // eslint-disable-next-line
   }, []);
 
-  const { touched, handleBlur, errors } = useFormik({
-    initialValues: newPassword,
+  const { values, touched, handleBlur, handleChange, errors } = useFormik({
+    initialValues: {
+      password: "",
+    },
     validationSchema: createUserSchema,
   });
 
@@ -84,8 +85,8 @@ export default function EditUserDetail() {
 
   const UpdatePassword = async () => {
     const data = {
-      id,
-      password: newPassword,
+      id: userid,
+      password: values.password,
     };
     try {
       await updatePassword(data);
@@ -96,7 +97,7 @@ export default function EditUserDetail() {
   };
   const UpdateUserDetails = async () => {
     const content = {
-      id,
+      id: userid,
       name: updatedUser.name,
       username: updatedUser.username,
       email: updatedUser.email,
@@ -113,12 +114,11 @@ export default function EditUserDetail() {
       dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
       navigate("/error");
     }
-    if (!updatePasswordBtn && newPassword !== "") {
+    if (!updatePasswordBtn && values.password !== "") {
       UpdatePassword();
     }
     setShowModal(true);
     setUpdatePasswordBtn(true);
-    setNewPassword("");
     setModalUse({ action: "update" });
     setTimeout(() => {
       setShowModal(false);
@@ -146,7 +146,7 @@ export default function EditUserDetail() {
       <div className="container mt-5">
         <div className="row mt-5">
           <div className="col-12 d-flex justify-content-between">
-            <button className="btn-primary rounded border-0 p-2" onClick={() => navigate("/admin/panel")}>
+            <button className="btn-primary rounded border-0 p-2" onClick={() => navigate(`/admin/panel/${id}`)}>
               Back to admin Panel
             </button>
             <button className="btn-success rounded border-0 p-2" onClick={UpdateUserDetails}>
@@ -172,16 +172,14 @@ export default function EditUserDetail() {
                   Enter New Password
                 </label>
                 <Input
-                  type="password"
-                  name="password"
-                  value={newPassword}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                  }}
-                  onBlur={handleBlur}
-                  error={errors.password && touched.password ? 1 : undefined}
-                  errormessage={errors.password}
-                />
+                type="password"
+                name="password"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.password && touched.password ? 1 : undefined}
+                errormessage={errors.password}
+              />
               </>
             )}
           </div>

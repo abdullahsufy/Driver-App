@@ -15,9 +15,9 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Login />} />
           <Route exact path="/home" element={<Home />} />
-          <Route exact path="/admin" element={<AdminLogin/>} />
-          <Route exact path="/admin/panel" element={<AdminPage />} />
-          <Route exact path="/update/user/:id" element={<EditUserDetail />} />
+          <Route exact path="/admin" element={<AdminLogin />} />
+          <Route exact path="/admin/panel/:id" element={<AdminPage />} />
+          <Route exact path="/:id/update/:userid" element={<EditUserDetail />} />
           <Route exact path="/error" element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>

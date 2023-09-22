@@ -21,6 +21,9 @@ router.get("/user/details/:id", validateUser, controller.getDetail);
 //AdminLogin
 router.post("/login/admin", controller.adminLogin);
 
+//AdminLogin
+router.put("/update/admin/password", validateAdmin, controller.editAdmin);
+
 //register
 router.post("/register", validateAdmin, controller.register);
 

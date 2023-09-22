@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import { gettAllUsers, register, deleteUser } from "../api/apis";
+import { gettAllUsers, register, deleteUser, updateAdminPassword } from "../api/apis";
 import UserForm from "../components/UserForm";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Table from "../components/Table";
 import Loader from "../components/Loader";
 import ModalPopup from "../components/ModalPopup";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
+import { useFormik } from "formik";
+import createUserSchema from "../schemas/createUserSchema";
+import Input from "../components/Input";
 
 export default function AdminPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { id } = useParams();
 
   const [data, setData] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -55,6 +60,35 @@ export default function AdminPage() {
     setShowModal(false);
   };
 
+  const UpdateAdminPassword = async () => {
+    if (values.password !== "") {
+      const data = {
+        id,
+        password: values.password,
+      };
+      try {
+        const response = await updateAdminPassword(data);
+        if (response.status === 200) {
+          setModalUse("updatedsucessfully");
+          setShowModal(true);
+          setTimeout(() => {
+            setShowModal(false);
+          }, 1000);
+        }
+      } catch (error) {
+        dispatch(setUser({ errormessage: "Please authenticate using a valid token" }));
+        navigate("/error");
+      }
+    }
+  };
+
+  const { values, touched, handleBlur, handleChange, errors } = useFormik({
+    initialValues: {
+      password: "",
+    },
+    validationSchema: createUserSchema,
+  });
+
   const HandleDelete = async () => {
     const id = deleteUserId;
     try {
@@ -83,6 +117,19 @@ export default function AdminPage() {
   return (
     <div className="container-fluid">
       <div className="container mt-5">
+        <div className="col-12 mb-5 d-flex justify-content-between align-items-center">
+          <p className="text-light fs-2">Admin Only</p>
+          <button
+            className="btn btn-danger px-2 py-0 border-0 rounded"
+            onClick={() => {
+              setModalUse("editadminpassword");
+              setShowModal(true);
+            }}
+            style={{ height: "50px" }}
+          >
+            Update admin password
+          </button>
+        </div>
         <h1 className="text-center">Admin Panel</h1>
         <div className="d-flex justify-content-end">
           <Button
@@ -99,6 +146,7 @@ export default function AdminPage() {
           {data.length ? (
             <Table
               data={data}
+              id={id}
               headers={headers}
               HandleDelete={(id) => {
                 setShowModal(true);
@@ -114,7 +162,17 @@ export default function AdminPage() {
           showModal={showModal}
           setShowModal={setShowModal}
           closeBtn={modalUse === "deleteuser" ? false : true}
-          title={modalUse === "adduser" ? "Create a User" : modalUse === "deleteuser" ? "Do you really want to delete this user ?" : null}
+          title={
+            modalUse === "adduser"
+              ? "Create a User"
+              : modalUse === "deleteuser"
+              ? "Do you really want to delete this user ?"
+              : modalUse === "editadminpassword"
+              ? "Enter New Password"
+              : modalUse === "updatedsucessfully"
+              ? "Updated Sucessfully!"
+              : null
+          }
         >
           {modalUse === "adduser" ? (
             <div>
@@ -134,6 +192,23 @@ export default function AdminPage() {
               >
                 Delete
               </button>
+            </div>
+          ) : modalUse === "editadminpassword" ? (
+            <div>
+              <Input
+                type="password"
+                name="password"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.password && touched.password ? 1 : undefined}
+                errormessage={errors.password}
+              />
+              <div className="d-flex justify-content-end mt-3">
+                <button className="btn btn-primary border-0 px-3 py-2" onClick={UpdateAdminPassword}>
+                  Update
+                </button>
+              </div>
             </div>
           ) : null}
         </ModalPopup>
