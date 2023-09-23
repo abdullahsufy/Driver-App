@@ -12,6 +12,8 @@ export default function ErrorPage() {
       navigate("/");
     } else if (errorsource === "admin") {
       navigate("/admin");
+    } else {
+      navigate("/");
     }
   };
 

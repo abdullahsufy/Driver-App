@@ -7,7 +7,7 @@ import Table from "../components/Table";
 import Loader from "../components/Loader";
 import ModalPopup from "../components/ModalPopup";
 import { useDispatch } from "react-redux";
-import { setUser } from "../store/userSlice";
+import { setUser, resetUser } from "../store/userSlice";
 import { useFormik } from "formik";
 import createUserSchema from "../schemas/createUserSchema";
 import Input from "../components/Input";
@@ -102,6 +102,12 @@ export default function AdminPage() {
       navigate("/error");
     }
   };
+
+  const ResetFunction = () => {
+    dispatch(resetUser);
+    localStorage.removeItem("admin-token");
+    navigate("/admin");
+  };
   const headers = ["name", "username", "email", "operations"];
   const inputList = [
     { name: "name", type: "text", value: "" },
@@ -120,16 +126,21 @@ export default function AdminPage() {
       <div className="container mt-5">
         <div className="col-12 mb-5 d-flex justify-content-between align-items-center">
           <p className="text-light fs-2">ADMIN PANEL</p>
-          <button
-            className="btn btn-danger px-2 py-0 border-0 rounded"
-            onClick={() => {
-              setModalUse("editadminpassword");
-              setShowModal(true);
-            }}
-            style={{ height: "50px" }}
-          >
-            Update Admin Password
-          </button>
+          <div>
+            <button
+              className="btn btn-danger px-2 py-0 border-0 rounded"
+              onClick={() => {
+                setModalUse("editadminpassword");
+                setShowModal(true);
+              }}
+              style={{ height: "50px" }}
+            >
+              Update Admin Password
+            </button>
+            <button className="btn btn-danger px-3 py-0 border-0 rounded ms-3" onClick={ResetFunction} style={{ height: "50px" }}>
+              Logout
+            </button>
+          </div>
         </div>
         <div className="d-flex justify-content-end">
           <Button

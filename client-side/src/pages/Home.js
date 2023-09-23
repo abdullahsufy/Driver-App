@@ -67,7 +67,7 @@ export default function Home() {
 
   const ResetFunction = () => {
     dispatch(resetUser);
-    localStorage.clear();
+    localStorage.removeItem('auth-token');
     navigate("/");
   };
   const headers = ["time", "type", "credit", "debit", "note"];

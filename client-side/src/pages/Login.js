@@ -1,4 +1,4 @@
-import React from "react";
+import { React } from "react";
 import pic from "../pics/logo.jpeg";
 import { login } from "../api/apis";
 import { useDispatch } from "react-redux";
