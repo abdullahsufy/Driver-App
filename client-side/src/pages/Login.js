@@ -1,4 +1,4 @@
-import { React } from "react";
+import { React, useEffect } from "react";
 import pic from "../pics/logo.jpeg";
 import { login } from "../api/apis";
 import { useDispatch } from "react-redux";
@@ -11,6 +11,13 @@ import Input from "../components/Input";
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  useEffect(() => {
+    document.body.style.backgroundColor = "#084c61";
+    return () => {
+      document.body.style.backgroundColor = "white";
+    };
+    // eslint-disable-next-line
+  }, []);
 
   const HandleLogin = async (e) => {
     e.preventDefault();
@@ -54,7 +61,7 @@ export default function Login() {
       <div className="container">
         <form onSubmit={HandleLogin}>
           <div>
-            <label htmlFor="exampleInputEmail1" className="form-label border px-2 py-1">
+            <label htmlFor="exampleInputEmail1" className="form-label border-0 px-2 py-1 text-light">
               USERNAME
             </label>
             <Input
@@ -66,7 +73,7 @@ export default function Login() {
               error={errors.username && touched.username ? 1 : undefined}
               errormessage={errors.username}
             />
-            <label htmlFor="exampleInputPassword1" className="form-label border px-2 py-1">
+            <label htmlFor="exampleInputPassword1" className="form-label border-0 px-2 py-1 text-light">
               PASSWORD
             </label>
             <Input

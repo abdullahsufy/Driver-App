@@ -13,7 +13,11 @@ export default function AdminLogin() {
   const [disabled, setDisabled] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
-    document.body.style.backgroundColor = "black";
+    document.body.style.backgroundColor = "#084c61";
+    return () => {
+      document.body.style.backgroundColor = "white";
+    };
+    // eslint-disable-next-line
   }, []);
 
   const { values, touched, handleBlur, handleChange, errors } = useFormik({
@@ -79,7 +83,11 @@ export default function AdminLogin() {
             errormessage={errors.password}
           />
         </div>
-        <button onClick={HandleLogin} className={`${disabled ? "btn-dark" : "btn-light"} rounded border-0 px-3 py-2 mt-3 fs-4 fw-bold`} disabled={disabled}>
+        <button
+          onClick={HandleLogin}
+          className={`${disabled ? "btn-background-color " : "btn-light"} rounded border-1 border-light px-3 py-2 mt-3 fs-4 fw-bold`}
+          disabled={disabled}
+        >
           Login
         </button>
       </div>
