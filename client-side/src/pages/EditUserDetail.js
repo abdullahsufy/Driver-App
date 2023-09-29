@@ -65,11 +65,8 @@ export default function EditUserDetail() {
     setData(newData);
   };
   useEffect(() => {
-    document.body.style.backgroundColor = "#084c61";
     GetData(userid);
-    return () => {
-      document.body.style.backgroundColor = "white";
-    };
+
     // eslint-disable-next-line
   }, []);
 

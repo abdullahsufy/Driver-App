@@ -1,26 +1,29 @@
-import { React, useEffect } from "react";
-import pic from "../pics/logo.jpeg";
-import { login } from "../api/apis";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
 import { useNavigate } from "react-router-dom";
+import { login } from "../api/apis";
 import loginSchema from "../schemas/loginSchema";
 import { useFormik } from "formik";
-import Input from "../components/Input";
 
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  useEffect(() => {
-    document.body.style.backgroundColor = "#084c61";
-    return () => {
-      document.body.style.backgroundColor = "white";
-    };
-    // eslint-disable-next-line
-  }, []);
+
+  const { values, touched, handleBlur, handleChange, errors, isValid, dirty } = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validationSchema: loginSchema,
+  });
 
   const HandleLogin = async (e) => {
     e.preventDefault();
+    if (!isValid) {
+      return;
+    }
+
     const data = {
       username: values.username,
       password: values.password,
@@ -28,6 +31,7 @@ export default function Login() {
 
     try {
       const response = await login(data);
+
       if (response.status === 200) {
         const user = {
           _id: response.data.user._id,
@@ -45,51 +49,46 @@ export default function Login() {
     }
   };
 
-  const { values, touched, handleBlur, handleChange, errors } = useFormik({
-    initialValues: {
-      username: "",
-      password: "",
-    },
-    validationSchema: loginSchema,
-  });
-
   return (
-    <div className="container-fluid my-5">
-      <div className="container d-flex justify-content-center">
-        <img src={pic} alt="..." />
-      </div>
-      <div className="container">
-        <form onSubmit={HandleLogin}>
-          <div>
-            <label htmlFor="exampleInputEmail1" className="form-label border-0 px-2 py-1 text-light">
-              USERNAME
-            </label>
-            <Input
-              type="text"
-              value={values.username}
-              name="username"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              error={errors.username && touched.username ? 1 : undefined}
-              errormessage={errors.username}
-            />
-            <label htmlFor="exampleInputPassword1" className="form-label border-0 px-2 py-1 text-light">
-              PASSWORD
-            </label>
-            <Input
-              type="password"
-              value={values.password}
-              name="password"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              error={errors.password && touched.password ? 1 : undefined}
-              errormessage={errors.password}
-            />
-          </div>
-          <button type="submit" className="btn btn-primary fs-2" disabled={!values.username || !values.password || errors.username || errors.password}>
-            LOGIN
-          </button>
-        </form>
+    <div className="d-flex justify-content-center align-items-center min-vh-100">
+      <div className="login-wrapper">
+        <span className="login-bg-animate"></span>
+        <div className="login-form-box">
+          <h2>LOGIN</h2>
+          <form onSubmit={HandleLogin}>
+            <div className="login-input-box">
+              <input type="text" name="username" value={values.username} onChange={handleChange} onBlur={handleBlur} required />
+              <label>Username</label>
+              <i className="fa-solid fa-user"></i>
+              {touched.username && errors.username && (
+                <p className="text-danger text-end border-0 m-0 ">
+                  <small>{errors.username}</small>
+                </p>
+              )}
+            </div>
+            <div className="login-input-box">
+              <input type="password" name="password" value={values.password} onChange={handleChange} onBlur={handleBlur} required />
+              <label>Password</label>
+              <i className="fa-solid fa-lock"></i>
+              {touched.password && errors.password && (
+                <p className="text-danger text-end border-0 m-0 ">
+                  <small>{errors.password}</small>
+                </p>
+              )}
+            </div>
+            <button
+              type="submit"
+              disabled={!isValid || !dirty}
+              className={`login-btn ${!errors.username && !errors.password && isValid && dirty ? "login-btn-hover" : ""}`}
+            >
+              Login
+            </button>
+          </form>
+        </div>
+        <div className="login-info-text">
+          <h2>Welcome Back!</h2>
+          <p>Our Beloved Drivers.</p>
+        </div>
       </div>
     </div>
   );

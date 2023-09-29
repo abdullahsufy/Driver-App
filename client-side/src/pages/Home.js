@@ -20,10 +20,6 @@ export default function Home() {
 
   useEffect(() => {
     getUserDetail();
-    document.body.style.backgroundColor = "#084c61";
-    return () => {
-      document.body.style.backgroundColor = "white";
-    };
     // eslint-disable-next-line
   }, []);
 
@@ -67,7 +63,7 @@ export default function Home() {
 
   const ResetFunction = () => {
     dispatch(resetUser);
-    localStorage.removeItem('auth-token');
+    localStorage.removeItem("auth-token");
     navigate("/");
   };
   const headers = ["time", "type", "credit", "debit", "note"];

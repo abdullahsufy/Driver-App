@@ -1,3 +1,175 @@
+/* =======================Login Page Started=========================== */
+* {
+  /* margin: 0;
+  padding: 0;
+  box-sizing: border-box; */
+  font-family: "poppins", sans-serif;
+}
+
+body {
+  background: #081b29;
+}
+
+.login-wrapper {
+  position: relative;
+  width: 750px;
+  height: 450px;
+  background: transparent;
+  border: 2px solid #0ef;
+  box-shadow: 0 0 25px #0ef;
+  overflow: hidden;
+}
+
+.login-wrapper .login-form-box {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 0%;
+  padding: 0 40px;
+}
+
+.login-form-box h2 {
+  font-size: 32px;
+  color: #fff;
+  text-align: center;
+}
+
+.login-form-box .login-input-box {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 25px 0;
+}
+
+.login-input-box input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  border-bottom: 2px solid #fff;
+  padding-right: 23px;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 500;
+  transition: 0.5s;
+}
+
+.login-input-box input:focus:focus,
+.login-input-box input:valid:valid {
+  border-bottom-color: #0ef;
+}
+
+.login-input-box label {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: 0.5s;
+}
+
+.login-input-box input:focus ~ label,
+.login-input-box input:valid ~ label {
+  top: -5px;
+  color: #0ef;
+}
+
+.login-input-box i {
+  position: absolute;
+  top: 50%;
+  right: 0%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+  transition: 0.5s;
+}
+
+.login-input-box input:focus ~ i,
+.login-input-box input:valid ~ i {
+  color: #0ef;
+}
+
+.login-btn {
+  position: relative;
+  width: 100%;
+  height: 45px;
+  background: transparent;
+  border: 2px solid #0ef;
+  outline: none;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.login-btn::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 300%;
+  background: linear-gradient(#081b29, #0ef, #081b29, #0ef);
+  z-index: -1;
+  transition: 0.5s;
+}
+
+.login-btn-hover:hover:before {
+  top: 0;
+}
+
+.login-wrapper .login-info-text {
+  position: absolute;
+  top: 0%;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-wrapper .login-info-text {
+  right: 0;
+  text-align: right;
+  padding: 0 40px 60px 150px;
+}
+
+.login-info-text h2 {
+  font-size: 36px;
+  color: #fff;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.login-info-text p {
+  font-size: 16px;
+  color: #fff;
+}
+
+.login-wrapper .login-bg-animate {
+  position: absolute;
+  top: -4px;
+  right: 0%;
+  width: 850px;
+  height: 600px;
+  background: linear-gradient(45deg, #081b29, #0ef);
+  border-bottom: 3px solid #0ef;
+  transform: rotate(10deg) skewY(40deg);
+  transform-origin: bottom right;
+}
+
+/* =======================Login Page Closed=========================== */
+
 /* =======================Loader Started=========================== */
 
 .loaderWrapper {

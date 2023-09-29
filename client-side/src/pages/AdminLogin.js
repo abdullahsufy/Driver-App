@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import loginSchema from "../schemas/loginSchema";
 import { useFormik } from "formik";
@@ -12,13 +12,6 @@ export default function AdminLogin() {
 
   const [disabled, setDisabled] = useState(true);
   const navigate = useNavigate();
-  useEffect(() => {
-    document.body.style.backgroundColor = "#084c61";
-    return () => {
-      document.body.style.backgroundColor = "white";
-    };
-    // eslint-disable-next-line
-  }, []);
 
   const { values, touched, handleBlur, handleChange, errors } = useFormik({
     initialValues: {

@@ -24,11 +24,8 @@ export default function AdminPage() {
   const [deleteUserId, setDeleteUserId] = useState(null);
 
   useEffect(() => {
-    document.body.style.backgroundColor = "#084c61";
     getUsers();
-    return () => {
-      document.body.style.backgroundColor = "white";
-    };
+
     // eslint-disable-next-line
   }, []);
 
