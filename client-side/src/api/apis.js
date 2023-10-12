@@ -7,8 +7,10 @@ const refreshAdminToken = () => {
   apiForAdmin.defaults.headers["admin-token"] = localStorage.getItem("admin-token");
 };
 
+const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
+
 const apiForLogin = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: REACT_APP_API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -16,7 +18,7 @@ const apiForLogin = axios.create({
 });
 
 const apiForUser = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: REACT_APP_API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -25,7 +27,7 @@ const apiForUser = axios.create({
 });
 
 const apiForAdmin = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: REACT_APP_API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

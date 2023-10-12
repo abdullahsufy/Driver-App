@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
 import { useNavigate } from "react-router-dom";
-import { login } from "../api/apis";
+import { login, adminLogin } from "../api/apis";
 import loginSchema from "../schemas/loginSchema";
 import { useFormik } from "formik";
 
@@ -18,17 +18,7 @@ export default function Login() {
     validationSchema: loginSchema,
   });
 
-  const HandleLogin = async (e) => {
-    e.preventDefault();
-    if (!isValid) {
-      return;
-    }
-
-    const data = {
-      username: values.username,
-      password: values.password,
-    };
-
+  const HandleUserLogin = async (data) => {
     try {
       const response = await login(data);
 
@@ -46,6 +36,38 @@ export default function Login() {
     } catch (error) {
       dispatch(setUser({ errormessage: "Invalid username or password", errorsource: "user" }));
       navigate("/error");
+    }
+  };
+
+  const HandleAdminLogin = async (data) => {
+    try {
+      const response = await adminLogin(data);
+      if (response.status === 200) {
+        localStorage.setItem("admin-token", response.data.adminToken);
+        const { id } = response.data.admin;
+        navigate(`/admin/panel/${id}`);
+      } else {
+        console.log(`Login failed with status: ${response.status}`);
+      }
+    } catch (error) {
+      dispatch(setUser({ errormessage: "Invalid username or password", errorsource: "admin" }));
+      navigate("/error");
+    }
+  };
+
+  const HandleLogin = (e) => {
+    e.preventDefault();
+    if (!isValid) {
+      return;
+    }
+    const data = {
+      username: values.username,
+      password: values.password,
+    };
+    if (window.location.pathname.includes("/admin")) {
+      HandleAdminLogin(data);
+    } else {
+      HandleUserLogin(data);
     }
   };
 
